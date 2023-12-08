@@ -1,4 +1,4 @@
-FROM alpine:3.18.3
+FROM lscr.io/linuxserver/firefox:101.0.1
 
 RUN apk update && apk add nginx
 
@@ -8,10 +8,11 @@ COPY files/nginx.conf /etc/nginx/nginx.conf
 # Add our static files to a common folder to be provided by nginx
 RUN mkdir -p /site
 COPY files/register_service /site/register_service
-COPY sites/* /site/
 
 # Copy everything for your application
 COPY files/entrypoint.sh /entrypoint.sh
+
+RUN rm /defaults/autostart
 
 # Add docker configuration
 LABEL permissions='{\
@@ -25,8 +26,17 @@ LABEL permissions='{\
           "HostPort": ""\
         }\
       ]\
-    }\
-  }\
+    },\
+    "Binds": [\
+      "/dev:/dev:rw"\
+    ],\
+    "Privileged": true\
+  },\
+  "Env": [\
+    "PUID=1000",\
+    "PGID=1000",\
+    "TZ=Etc/UTC"\
+  ]\
 }'
 LABEL authors='[\
     {\

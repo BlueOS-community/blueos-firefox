@@ -6,4 +6,5 @@ set -m
 echo "Starting nginx.."
 nginx &
 echo "Starting our application.."
+firefox
 sleep infinity
